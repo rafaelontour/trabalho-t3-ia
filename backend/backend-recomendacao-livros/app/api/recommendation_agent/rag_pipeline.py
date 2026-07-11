@@ -8,11 +8,11 @@ class RagPipeline:
         pass
     
 
-    def stream_build(self, session):
+    def stream_build(self, session, user_query: str):
         """
         
         """
-        
+
         # Etapa 1: fazer a vetorização da pergunta do usuário
 
         # Etapa 2: recuperar os livros da base de dados
