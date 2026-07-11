@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "API de Recomendação de Livros"
     api_prefix: str = "/api/v1"
+    public_base_url: str = "http://localhost:8000"
 
     database_url: str = (
         "postgresql+asyncpg://postgres:postgres@localhost:5432/livros"

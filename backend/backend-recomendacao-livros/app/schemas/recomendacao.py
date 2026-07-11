@@ -28,4 +28,5 @@ class RecomendacaoResponse(BaseModel):
     ano: int | None
     numero_paginas: int | None
     descricao: str | None
+    imagem_url: str | None = None
     similaridade: float

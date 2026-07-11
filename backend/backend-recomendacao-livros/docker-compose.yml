@@ -3,12 +3,19 @@ services:
     build: .
     container_name: livros-api
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/livros
-      CORS_ORIGINS: http://localhost:3000
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@bd-trabalho-t3:5432/trabalho-t3
+      PUBLIC_BASE_URL: http://localhost:8000
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001
     ports:
       - "8000:8000"
     volumes:
       - huggingface_cache:/app/.cache/huggingface
+    networks:
+      - backend_default
+
+networks:
+  backend_default:
+    external: true
 
 volumes:
   livros_postgres_data:

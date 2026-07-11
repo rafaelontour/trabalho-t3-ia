@@ -1,12 +1,15 @@
 import type {
+  ListarLivrosParams,
   Livro,
   LivroRecomendado,
+  LivrosPaginados,
   RecomendacaoPayload
 } from "@/types/livro";
 
-const API_URL =
+const API_URL = (
   process.env.NEXT_PUBLIC_API_URL ??
-  "http://localhost:8000/api/v1";
+  "http://localhost:8000/api/v1"
+).replace(/\/$/, "");
 
 async function request<T>(
   endpoint: string,
@@ -39,8 +42,29 @@ async function request<T>(
   return response.json() as Promise<T>;
 }
 
-export function listarLivros(): Promise<Livro[]> {
-  return request<Livro[]>("/livros?limite=200&offset=0", {
+export function listarLivros(
+  params: ListarLivrosParams = {}
+): Promise<LivrosPaginados> {
+  const searchParams = new URLSearchParams({
+    limite: String(params.limite ?? 12),
+    offset: String(params.offset ?? 0)
+  });
+
+  if (params.busca) {
+    searchParams.set("busca", params.busca);
+  }
+
+  if (params.genero) {
+    searchParams.set("genero", params.genero);
+  }
+
+  return request<LivrosPaginados>(`/livros?${searchParams.toString()}`, {
+    cache: "no-store"
+  });
+}
+
+export function listarGeneros(): Promise<string[]> {
+  return request<string[]>("/livros/generos", {
     cache: "no-store"
   });
 }

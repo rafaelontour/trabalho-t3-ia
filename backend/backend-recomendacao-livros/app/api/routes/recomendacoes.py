@@ -4,6 +4,7 @@ from starlette.concurrency import run_in_threadpool
 
 from app.db.session import get_db
 from app.repositories.livro_repository import LivroRepository
+from app.api.routes.livros import imagem_url_livro
 from app.schemas.recomendacao import (
     RecomendacaoRequest,
     RecomendacaoResponse,
@@ -38,6 +39,7 @@ async def recomendar_livros(
             ano=livro.ano,
             numero_paginas=livro.numero_paginas,
             descricao=livro.descricao,
+            imagem_url=imagem_url_livro(livro.id),
             similaridade=round(float(similaridade), 4),
         )
         for livro, similaridade in resultados

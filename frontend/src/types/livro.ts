@@ -6,6 +6,24 @@ export type Livro = {
   ano: number | null;
   numero_paginas: number | null;
   descricao: string | null;
+  imagem_url?: string | null;
+  imagem?: string | null;
+  capa_url?: string | null;
+  capa?: string | null;
+};
+
+export type LivrosPaginados = {
+  items: Livro[];
+  total: number;
+  limite: number;
+  offset: number;
+};
+
+export type ListarLivrosParams = {
+  limite?: number;
+  offset?: number;
+  busca?: string;
+  genero?: string;
 };
 
 export type LivroRecomendado = Livro & {
