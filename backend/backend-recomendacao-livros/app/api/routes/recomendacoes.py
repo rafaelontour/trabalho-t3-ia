@@ -11,6 +11,10 @@ from app.schemas.recomendacao import (
 )
 from app.services.embedding_service import embedding_service
 from app.api.recommendation_agent.book_recommendation_builder import BookRecommendationBuilder
+from app.api.providers.llama_provider import OllamaProvider
+from app.api.providers.gemini_provider import GeminiProvider
+from app.api.providers.openai_provider import OpenAIProvider
+from app.api.utils import Book, BookRecommendationResult
 
 router = APIRouter(prefix="/recomendacoes", tags=["Recomendações"])
 
@@ -19,38 +23,19 @@ router = APIRouter(prefix="/recomendacoes", tags=["Recomendações"])
 async def recomendar_livros(
     payload: RecomendacaoRequest,
     db: AsyncSession = Depends(get_db),
-) -> list[RecomendacaoResponse]:
-    
-    # vetor_consulta = await run_in_threadpool(
-    #     embedding_service.gerar_embedding,
-    #     payload.preferencia,
-    # )
+) -> BookRecommendationResult:
 
-    # repository = LivroRepository(db)
-    # resultados = await repository.buscar_semelhantes(
-    #     embedding=vetor_consulta,
-    #     limite=payload.limite,
-    # )
+    llama_provider = OllamaProvider(model_config={}) 
+    gemini_provider = GeminiProvider(model_config={"temperature": 0.3, "token_limit": 300})
+    openai_provider = OpenAIProvider(model_config={"temperature": 0.5, "token_limit": 200})
 
-    results = BookRecommendationBuilder.stream_build(
+    builder = BookRecommendationBuilder(provider=openai_provider)
+
+    result = await builder.stream_build(
         user_message=payload.preferencia,
         top_k=payload.limite
     )
 
+    return result
+
     
-
-
-    return [
-        RecomendacaoResponse(
-            id=livro.id,
-            titulo=livro.titulo,
-            autor=livro.autor,
-            genero=livro.genero,
-            ano=livro.ano,
-            numero_paginas=livro.numero_paginas,
-            descricao=livro.descricao,
-            imagem_url=imagem_url_livro(livro.id),
-            similaridade=round(float(similaridade), 4),
-        )
-        for livro, similaridade in resultados
-    ]

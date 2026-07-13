@@ -8,15 +8,9 @@ from app.api.providers.llama_provider import OllamaProvider
 from app.api.providers.gemini_provider import GeminiProvider
 from app.api.providers.openai_provider import OpenAIProvider
 from app.api.recommendation_agent.rag_pipeline import RagPipeline
-from app.api.utils import Book
+from app.api.utils import BookRecommendationResult
 
 logger = logging.getLogger("app_logger.book_recommendation_builder")
-
-@dataclass
-class BookRecommendationResult: 
-
-    response: str
-    retrieved_books: list[Book]
 
 
 class BookRecommendationBuilder:
@@ -128,8 +122,8 @@ class BookRecommendationBuilder:
         """
         Injeta o contexto no prompt base de resposta final. 
 
-        :param 
-        :param 
+        :param base_prompt: prompt base da resposta, sem os documentos e a pergunta do usuário injetados.
+        :param rag_documents: 
 
         :return 
         """
@@ -165,7 +159,7 @@ if __name__ == "__main__":
         gemini_provider = GeminiProvider(model_config={"temperature": 0.3, "token_limit": 300})
         openai_provider = OpenAIProvider(model_config={"temperature": 0.5, "token_limit": 200})
 
-        builder = BookRecommendationBuilder(provider=openai_provider)
+        builder = BookRecommendationBuilder(provider=gemini_provider)
 
         query = "Quero recomendações de livros de romance parecidos com os livros da Ali Hazelwood."
 

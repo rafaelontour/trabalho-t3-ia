@@ -49,3 +49,9 @@ class Book:
             return "ciência"
         else:
             return value.lower()
+        
+@dataclass
+class BookRecommendationResult: 
+
+    response: str
+    retrieved_books: list[Book]

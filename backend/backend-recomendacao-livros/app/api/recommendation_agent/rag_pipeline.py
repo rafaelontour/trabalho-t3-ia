@@ -17,7 +17,13 @@ class RagPipeline:
 
     async def stream_build(self, session, user_query: str, top_k: int) -> list[Book]:
         """
-        
+        Implementa a pipeline de RAG.
+
+        :param session: sessão com o banco de dados.
+        :param user_query: pergunta do usuário.
+        :param top_k: limite de livros que serão recuperados do banco.
+
+        :return lista de objetos Book recuperados, se houver.
         """
 
         print("Iniciando pipeline de recuperação dos livros...")
