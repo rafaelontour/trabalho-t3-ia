@@ -8,6 +8,23 @@ from app.models.livro import Livro
 from app.services.embedding_service import embedding_service
 
 
+def build_document(livro):
+
+    return f"""
+            Título: {livro.titulo}
+
+            Autor: {livro.autor}
+
+            Gênero: {livro.genero}
+
+            Ano: {livro.ano}
+
+            Número de páginas: {livro.numero_paginas}
+
+            Descrição:
+            {livro.descricao}
+        """
+
 def montar_texto(livro: Livro) -> str:
     partes = [
         livro.titulo,
@@ -34,7 +51,8 @@ async def main() -> None:
             return
 
         for indice, livro in enumerate(livros, start=1):
-            texto = montar_texto(livro)
+            
+            texto = build_document(livro)
 
             if not texto:
                 print(f"Ignorado {livro.id}: não possui texto.")

@@ -40,7 +40,7 @@ class OllamaProvider:
 
         try: 
             
-            # TODO: mudar para logger depois que arrumar
+            # TODO: mudar para logger depois que arrumar -> colocar no main ou no app logging.basicConfig(level=logging.INFO)
             print(f"[OllamaProvider][generate_response] Iniciando geração de resposta...")
 
             response = self.client.chat(

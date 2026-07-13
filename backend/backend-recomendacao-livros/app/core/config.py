@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     public_base_url: str = "http://localhost:8000"
 
     database_url: str = (
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/livros"
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/bd-trabalho-t3"
     )
 
     embedding_model: str = (
