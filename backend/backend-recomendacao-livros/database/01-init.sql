@@ -17,8 +17,7 @@ BEGIN
             'BIOGRAFIA',
             'CLASSICO',
             'INFANTIL',
-            'POEMA',
-            'OUTRO'
+            'POEMA'
         );
     END IF;
 END
@@ -28,7 +27,7 @@ CREATE TABLE IF NOT EXISTS livros (
     id VARCHAR(20) PRIMARY KEY,
     titulo VARCHAR(255),
     autor VARCHAR(255),
-    genero genero_enum DEFAULT 'OUTRO',
+    genero genero_enum,
     ano INT,
     numero_paginas INT,
     descricao TEXT,
@@ -94,54 +93,54 @@ INSERT INTO livros VALUES ('L0048', 'O Corvo', 'Edgar Allan Poe', 'TERROR', 1845
 INSERT INTO livros VALUES ('L0049', 'Madame Bovary', 'Gustave Flaubert', 'CLASSICO', 1856, 398, 'Numa pacata cidadezinha da França do século 19, Emma Bovary é a bela esposa de Charles Bovary, um médico da região. As complicações na vida de Emma começam quando ela dá início a uma aventura extraconjugal com o objetivo de se promover na sociedade, melhorar sua posição social e deixar de viver à sombra do marido.', NULL);
 
 -- novo catalogo:
-INSERT INTO livros VALUES ('L5000','Love, Theoretically','Ali Hazelwood','ROMANCE',2023,400,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5001','Love on the Brain','Ali Hazelwood','ROMANCE',2022,368,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5002','Not in Love','Ali Hazelwood','ROMANCE',2024,384,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5003','Book Lovers','Emily Henry','ROMANCE',2022,384,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5004','Beach Read','Emily Henry','ROMANCE',2020,384,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5005','Happy Place','Emily Henry','ROMANCE',2023,400,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5006','People We Meet on Vacation','Emily Henry','ROMANCE',2021,368,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5007','The Spanish Love Deception','Elena Armas','ROMANCE',2021,480,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5008','Yours Truly','Abby Jimenez','ROMANCE',2023,384,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5009','Part of Your World','Abby Jimenez','ROMANCE',2022,400,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5010','Mistborn','Brandon Sanderson','FANTASIA',2006,560,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5011','The Way of Kings','Brandon Sanderson','FANTASIA',2010,1008,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5012','A Court of Thorns and Roses','Sarah J. Maas','FANTASIA',2015,432,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5013','Fourth Wing','Rebecca Yarros','FANTASIA',2023,528,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5014','Six of Crows','Leigh Bardugo','FANTASIA',2015,480,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5015','The Silent Patient','Alex Michaelides','SUSPENSE',2019,336,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5016','Gone Girl','Gillian Flynn','SUSPENSE',2012,432,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5017','The Girl on the Train','Paula Hawkins','SUSPENSE',2015,378,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5018','The Da Vinci Code','Dan Brown','SUSPENSE',2003,480,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5019','Murder on the Orient Express','Agatha Christie','SUSPENSE',1934,256,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5020','It','Stephen King','TERROR',1986,1138,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5021','The Shining','Stephen King','TERROR',1977,447,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5022','Pet Sematary','Stephen King','TERROR',1983,416,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5023','Bird Box','Josh Malerman','TERROR',2014,272,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5024','Mexican Gothic','Silvia Moreno-Garcia','TERROR',2020,320,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5025','Dune','Frank Herbert','FICCAO',1965,688,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5026','Foundation','Isaac Asimov','FICCAO',1951,296,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5027','Neuromancer','William Gibson','FICCAO',1984,320,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5028','The Martian','Andy Weir','FICCAO',2011,384,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5029','Project Hail Mary','Andy Weir','FICCAO',2021,496,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5030','Cosmos','Carl Sagan','CIENCIA',1980,416,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5031','Astrophysics for People in a Hurry','Neil deGrasse Tyson','CIENCIA',2017,224,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5032','Sapiens','Yuval Noah Harari','CIENCIA',2011,464,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5033','The Selfish Gene','Richard Dawkins','CIENCIA',1976,360,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5034','A Short History of Nearly Everything','Bill Bryson','CIENCIA',2003,544,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5035','Steve Jobs','Walter Isaacson','BIOGRAFIA',2011,656,'Biografia. Livro amplamente reconhecido. Indicado para leitores interessados em biografia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5036','Becoming','Michelle Obama','BIOGRAFIA',2018,448,'Biografia. Livro amplamente reconhecido. Indicado para leitores interessados em biografia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5037','Long Walk to Freedom','Nelson Mandela','BIOGRAFIA',1994,656,'Biografia. Livro amplamente reconhecido. Indicado para leitores interessados em biografia. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5038','Matilda','Roald Dahl','INFANTIL',1988,240,'Infantil. Livro amplamente reconhecido. Indicado para leitores interessados em infantil. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5039','Charlotte''s Web','E. B. White','INFANTIL',1952,192,'Infantil. Livro amplamente reconhecido. Indicado para leitores interessados em infantil. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5040','The Gruffalo','Julia Donaldson','INFANTIL',1999,32,'Infantil. Livro amplamente reconhecido. Indicado para leitores interessados em infantil. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5041','Leaves of Grass','Walt Whitman','POEMA',1855,624,'Poema. Livro amplamente reconhecido. Indicado para leitores interessados em poema. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5042','The Waste Land','T. S. Eliot','POEMA',1922,80,'Poema. Livro amplamente reconhecido. Indicado para leitores interessados em poema. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5043','Crime and Punishment','Fyodor Dostoevsky','CLASSICO',1866,671,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5044','The Brothers Karamazov','Fyodor Dostoevsky','CLASSICO',1880,824,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5045','Anna Karenina','Leo Tolstoy','CLASSICO',1878,864,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5046','The Count of Monte Cristo','Alexandre Dumas','CLASSICO',1844,1276,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. Sinopse resumida para enriquecimento semântico.',NULL);
-INSERT INTO livros VALUES ('L5047','The Odyssey','Homer','CLASSICO',-700,500,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. Sinopse resumida para enriquecimento semântico.',NULL);
+-- INSERT INTO livros VALUES ('L5000','Love, Theoretically','Ali Hazelwood','ROMANCE',2023,400,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5001','Love on the Brain','Ali Hazelwood','ROMANCE',2022,368,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5002','Not in Love','Ali Hazelwood','ROMANCE',2024,384,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5003','Book Lovers','Emily Henry','ROMANCE',2022,384,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5004','Beach Read','Emily Henry','ROMANCE',2020,384,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5005','Happy Place','Emily Henry','ROMANCE',2023,400,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5006','People We Meet on Vacation','Emily Henry','ROMANCE',2021,368,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5007','The Spanish Love Deception','Elena Armas','ROMANCE',2021,480,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5008','Yours Truly','Abby Jimenez','ROMANCE',2023,384,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5009','Part of Your World','Abby Jimenez','ROMANCE',2022,400,'Romance. Livro amplamente reconhecido. Indicado para leitores interessados em romance. ',NULL);
+-- INSERT INTO livros VALUES ('L5010','Mistborn','Brandon Sanderson','FANTASIA',2006,560,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. ',NULL);
+-- INSERT INTO livros VALUES ('L5011','The Way of Kings','Brandon Sanderson','FANTASIA',2010,1008,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. ',NULL);
+-- INSERT INTO livros VALUES ('L5012','A Court of Thorns and Roses','Sarah J. Maas','FANTASIA',2015,432,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. ',NULL);
+-- INSERT INTO livros VALUES ('L5013','Fourth Wing','Rebecca Yarros','FANTASIA',2023,528,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. ',NULL);
+-- INSERT INTO livros VALUES ('L5014','Six of Crows','Leigh Bardugo','FANTASIA',2015,480,'Fantasia. Livro amplamente reconhecido. Indicado para leitores interessados em fantasia. ',NULL);
+-- INSERT INTO livros VALUES ('L5015','The Silent Patient','Alex Michaelides','SUSPENSE',2019,336,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. ',NULL);
+-- INSERT INTO livros VALUES ('L5016','Gone Girl','Gillian Flynn','SUSPENSE',2012,432,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. ',NULL);
+-- INSERT INTO livros VALUES ('L5017','The Girl on the Train','Paula Hawkins','SUSPENSE',2015,378,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. ',NULL);
+-- INSERT INTO livros VALUES ('L5018','The Da Vinci Code','Dan Brown','SUSPENSE',2003,480,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. ',NULL);
+-- INSERT INTO livros VALUES ('L5019','Murder on the Orient Express','Agatha Christie','SUSPENSE',1934,256,'Suspense. Livro amplamente reconhecido. Indicado para leitores interessados em suspense. ',NULL);
+-- INSERT INTO livros VALUES ('L5020','It','Stephen King','TERROR',1986,1138,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. ',NULL);
+-- INSERT INTO livros VALUES ('L5021','The Shining','Stephen King','TERROR',1977,447,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. ',NULL);
+-- INSERT INTO livros VALUES ('L5022','Pet Sematary','Stephen King','TERROR',1983,416,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. ',NULL);
+-- INSERT INTO livros VALUES ('L5023','Bird Box','Josh Malerman','TERROR',2014,272,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. ',NULL);
+-- INSERT INTO livros VALUES ('L5024','Mexican Gothic','Silvia Moreno-Garcia','TERROR',2020,320,'Terror. Livro amplamente reconhecido. Indicado para leitores interessados em terror. ',NULL);
+-- INSERT INTO livros VALUES ('L5025','Dune','Frank Herbert','FICCAO',1965,688,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. ',NULL);
+-- INSERT INTO livros VALUES ('L5026','Foundation','Isaac Asimov','FICCAO',1951,296,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. ',NULL);
+-- INSERT INTO livros VALUES ('L5027','Neuromancer','William Gibson','FICCAO',1984,320,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. ',NULL);
+-- INSERT INTO livros VALUES ('L5028','The Martian','Andy Weir','FICCAO',2011,384,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. ',NULL);
+-- INSERT INTO livros VALUES ('L5029','Project Hail Mary','Andy Weir','FICCAO',2021,496,'Ficcao. Livro amplamente reconhecido. Indicado para leitores interessados em ficcao. ',NULL);
+-- INSERT INTO livros VALUES ('L5030','Cosmos','Carl Sagan','CIENCIA',1980,416,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. ',NULL);
+-- INSERT INTO livros VALUES ('L5031','Astrophysics for People in a Hurry','Neil deGrasse Tyson','CIENCIA',2017,224,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. ',NULL);
+-- INSERT INTO livros VALUES ('L5032','Sapiens','Yuval Noah Harari','CIENCIA',2011,464,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. ',NULL);
+-- INSERT INTO livros VALUES ('L5033','The Selfish Gene','Richard Dawkins','CIENCIA',1976,360,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. ',NULL);
+-- INSERT INTO livros VALUES ('L5034','A Short History of Nearly Everything','Bill Bryson','CIENCIA',2003,544,'Ciencia. Livro amplamente reconhecido. Indicado para leitores interessados em ciencia. ',NULL);
+-- INSERT INTO livros VALUES ('L5035','Steve Jobs','Walter Isaacson','BIOGRAFIA',2011,656,'Biografia. Livro amplamente reconhecido. Indicado para leitores interessados em biografia. ',NULL);
+-- INSERT INTO livros VALUES ('L5036','Becoming','Michelle Obama','BIOGRAFIA',2018,448,'Biografia. Livro amplamente reconhecido. Indicado para leitores interessados em biografia. ',NULL);
+-- INSERT INTO livros VALUES ('L5037','Long Walk to Freedom','Nelson Mandela','BIOGRAFIA',1994,656,'Biografia. Livro amplamente reconhecido. Indicado para leitores interessados em biografia. ',NULL);
+-- INSERT INTO livros VALUES ('L5038','Matilda','Roald Dahl','INFANTIL',1988,240,'Infantil. Livro amplamente reconhecido. Indicado para leitores interessados em infantil. ',NULL);
+-- INSERT INTO livros VALUES ('L5039','Charlotte''s Web','E. B. White','INFANTIL',1952,192,'Infantil. Livro amplamente reconhecido. Indicado para leitores interessados em infantil. ',NULL);
+-- INSERT INTO livros VALUES ('L5040','The Gruffalo','Julia Donaldson','INFANTIL',1999,32,'Infantil. Livro amplamente reconhecido. Indicado para leitores interessados em infantil. ',NULL);
+-- INSERT INTO livros VALUES ('L5041','Leaves of Grass','Walt Whitman','POEMA',1855,624,'Poema. Livro amplamente reconhecido. Indicado para leitores interessados em poema. ',NULL);
+-- INSERT INTO livros VALUES ('L5042','The Waste Land','T. S. Eliot','POEMA',1922,80,'Poema. Livro amplamente reconhecido. Indicado para leitores interessados em poema. ',NULL);
+-- INSERT INTO livros VALUES ('L5043','Crime and Punishment','Fyodor Dostoevsky','CLASSICO',1866,671,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. ',NULL);
+-- INSERT INTO livros VALUES ('L5044','The Brothers Karamazov','Fyodor Dostoevsky','CLASSICO',1880,824,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. ',NULL);
+-- INSERT INTO livros VALUES ('L5045','Anna Karenina','Leo Tolstoy','CLASSICO',1878,864,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. ',NULL);
+-- INSERT INTO livros VALUES ('L5046','The Count of Monte Cristo','Alexandre Dumas','CLASSICO',1844,1276,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. ',NULL);
+-- INSERT INTO livros VALUES ('L5047','The Odyssey','Homer','CLASSICO',-700,500,'Classico. Livro amplamente reconhecido. Indicado para leitores interessados em classico. ',NULL);
 
 INSERT INTO livros  VALUES ('L0050', 'A Revolução dos Bichos', 'George Orwell', 'FICCAO', 1945, 152, 'Fábula política sobre animais que tomam uma fazenda e reproduzem novas formas de opressão.', NULL);
 INSERT INTO livros  VALUES ('L0051', 'Admirável Mundo Novo', 'Aldous Huxley', 'FICCAO', 1932, 312, 'Distopia sobre uma sociedade tecnocrática que troca liberdade e afeto por estabilidade e consumo.', NULL);

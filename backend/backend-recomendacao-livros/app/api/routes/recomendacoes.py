@@ -10,6 +10,7 @@ from app.schemas.recomendacao import (
     RecomendacaoResponse,
 )
 from app.services.embedding_service import embedding_service
+from app.api.recommendation_agent.book_recommendation_builder import BookRecommendationBuilder
 
 router = APIRouter(prefix="/recomendacoes", tags=["Recomendações"])
 
@@ -19,16 +20,25 @@ async def recomendar_livros(
     payload: RecomendacaoRequest,
     db: AsyncSession = Depends(get_db),
 ) -> list[RecomendacaoResponse]:
-    vetor_consulta = await run_in_threadpool(
-        embedding_service.gerar_embedding,
-        payload.preferencia,
+    
+    # vetor_consulta = await run_in_threadpool(
+    #     embedding_service.gerar_embedding,
+    #     payload.preferencia,
+    # )
+
+    # repository = LivroRepository(db)
+    # resultados = await repository.buscar_semelhantes(
+    #     embedding=vetor_consulta,
+    #     limite=payload.limite,
+    # )
+
+    results = BookRecommendationBuilder.stream_build(
+        user_message=payload.preferencia,
+        top_k=payload.limite
     )
 
-    repository = LivroRepository(db)
-    resultados = await repository.buscar_semelhantes(
-        embedding=vetor_consulta,
-        limite=payload.limite,
-    )
+    
+
 
     return [
         RecomendacaoResponse(

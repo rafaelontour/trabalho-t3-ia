@@ -41,9 +41,13 @@ class RagPipeline:
 
         
 
-    async def retrive_books_from_base(self, session, user_query_embeded: str, top_k: int): 
+    async def retrive_books_from_base(self, session, user_query_embeded, top_k: int): 
         """
-        
+        Recupera os livros da base de dados, ordenando por similaridade dos embeddings. 
+
+        :param session: sssão com o banco de dados. 
+        :param user_query_embeded: embedding gerado a partir da pergunta do usuário.
+        :param top_k: limite de livros que serão recuperados.
         """ 
 
         print("Recuperando livros do banco...")

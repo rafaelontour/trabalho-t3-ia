@@ -10,6 +10,8 @@ from app.api.providers.openai_provider import OpenAIProvider
 from app.api.recommendation_agent.rag_pipeline import RagPipeline
 from app.api.utils import Book
 
+logger = logging.getLogger("app_logger.book_recommendation_builder")
+
 @dataclass
 class BookRecommendationResult: 
 
@@ -22,7 +24,7 @@ class BookRecommendationBuilder:
     Classe responsável por gerir o fluxo de recomendação de livros.
     """
 
-    def __init__(self, provider: OllamaProvider | GeminiProvider):
+    def __init__(self, provider: OllamaProvider | GeminiProvider | OpenAIProvider):
         
         self.response_prompt = BOOK_RECOMMENDATION
 
@@ -55,7 +57,15 @@ class BookRecommendationBuilder:
             )
 
         if not rag_result:
-            raise (f"[][] Erro: nenhum resultado retornado da RAGPipeline.")
+
+            logger.error(f"[BookRecommendationBuilder][stream_build] Erro: nenhum resultado retornado da RAGPipeline.")
+            final_response = "Desculpe, tive um problema ao processar sua resposta e não encontrei nenhum livro no catálogo no momento."
+
+            return BookRecommendationResult(
+                response=final_response,
+                retrieved_books=rag_result
+            )
+            
 
         print("Livros recuperados da RagPipeline...")
 
@@ -69,23 +79,51 @@ class BookRecommendationBuilder:
 
         print("Gerando a resposta final...")
         # Etapa 4: geração de resposta final
-        # response = self.provider.generate_response(
-        #     prompt=updated_prompt
-        # )
 
         final_response = ""
 
-        print(f"\n\nPROMPT ATUALIZADO: {updated_prompt}\n\n")
+        try:
        
-        for token in self.provider.generate_response_stream(prompt=updated_prompt):
-            print(token, end="", flush=True)
-            final_response += token
+            for token in self.provider.generate_response_stream(prompt=updated_prompt):
+                print(token, end="", flush=True)
+                final_response += token
+        
+        except:
+            print("ERROOO NA RESPOSTAAA")
+            return self.build_default_response(rag_result)
 
         return BookRecommendationResult(
             response=final_response,
             retrieved_books=rag_result
         )
     
+    def build_default_response(self, rag_documents: list) -> BookRecommendationResult:
+        """
+        Monta uma resposta padrão em caso de erro do llm, indicando para o usuário o livro 
+        retornado que teve a maior similaridade na recuperação com o RAG.
+
+        :param rag_documents: lista de documentos recuperados do banco.
+
+        :return resposta final padrão montada.
+        """
+
+        # O RAG retorna os documentos ordenados por similaridade; o primeiro é o melhor
+        best_result = rag_documents[0]
+
+        # Monta uma resposta humanizada e informativa usando os dados do objeto Book
+        response = (
+            f"Tive um pequeno problema ao processar sua recomendação personalizada, mas com base na sua busca, "
+            f"acredito que você possa gostar de **\"{best_result.title}\"**, escrito por {best_result.author} ({best_result.year}). "
+            f"Este livro faz parte da categoria {best_result.normalize_category()} e sua sinopse diz: {best_result.book_description}"
+        )
+
+        return BookRecommendationResult(
+            response=response,
+            retrieved_books=[best_result]
+        )
+    
+
+
     def build_prompt(self, base_prompt: str, rag_documents: list, user_message: str) -> str:
         """
         Injeta o contexto no prompt base de resposta final. 
@@ -111,17 +149,7 @@ class BookRecommendationBuilder:
 
         pass
 
-    
-    # def process_user_message(user_message: str) -> str:
-    #     """
-        
-    #     """
-    #     # TODO: ajustar 
 
-
-    #     improved_query = ""
-
-    #     return improved_query
 
 
 # Teste do builder

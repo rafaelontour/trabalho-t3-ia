@@ -33,3 +33,19 @@ class Book:
             f"Categoria: {self.category}\n"
             f"Descrição: {self.book_description}"
         )
+    
+    def normalize_category(self) -> str:
+        """Normaliza o nome da categoria para retorno da resposta final."""
+
+        value = self.category.upper().strip()
+
+        if value in ('ROMANCE', 'FANTASIA', 'TERROR', 'SUSPENSE', 'INFANTIL', 'POEMA','BIOGRAFIA',): 
+            return value.lower()
+        elif value ==  'FICCAO':
+            return "ficção"
+        elif value == 'CLASSICO':
+            return "clássico"
+        elif value ==  'CIENCIA': 
+            return "ciência"
+        else:
+            return value.lower()
