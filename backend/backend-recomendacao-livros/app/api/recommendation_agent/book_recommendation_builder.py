@@ -1,9 +1,12 @@
+import logging
+
 from dataclasses import dataclass
 
 from app.db.session import AsyncSessionLocal
 from app.prompts.book_recomendation import BOOK_RECOMMENDATION
 from app.api.providers.llama_provider import OllamaProvider
 from app.api.providers.gemini_provider import GeminiProvider
+from app.api.providers.openai_provider import OpenAIProvider
 from app.api.recommendation_agent.rag_pipeline import RagPipeline
 from app.api.utils import Book
 
@@ -72,8 +75,9 @@ class BookRecommendationBuilder:
 
         final_response = ""
 
-        print("Resposta do Gemini: ", end="", flush=True)
-        for token in self.provider.generate_response_stream(prompt="Me indique um livro de ficção científica rápido de ler."):
+        print(f"\n\nPROMPT ATUALIZADO: {updated_prompt}\n\n")
+       
+        for token in self.provider.generate_response_stream(prompt=updated_prompt):
             print(token, end="", flush=True)
             final_response += token
 
@@ -119,21 +123,26 @@ class BookRecommendationBuilder:
 
     #     return improved_query
 
+
 # Teste do builder
 if __name__ == "__main__": 
 
     import asyncio
 
+    logging.basicConfig(level=logging.INFO)
+
     async def main(): 
+        
         llama_provider = OllamaProvider(model_config={}) 
         gemini_provider = GeminiProvider(model_config={"temperature": 0.3, "token_limit": 300})
+        openai_provider = OpenAIProvider(model_config={"temperature": 0.5, "token_limit": 200})
 
-        builder = BookRecommendationBuilder(provider=gemini_provider)
+        builder = BookRecommendationBuilder(provider=openai_provider)
 
-        query = "Quero recomendações de livro da Ali Hazelwood."
+        query = "Quero recomendações de livros de romance parecidos com os livros da Ali Hazelwood."
 
         response = await builder.stream_build(user_message=query, top_k=6)
 
-        # print(response)
+        print(response)
 
     asyncio.run(main())
