@@ -22,7 +22,7 @@ class RagPipeline:
 
         print("Iniciando pipeline de recuperação dos livros...")
 
-        print(f"Vetorizando a pergunta do usuário {user_query}")
+        print(f"Vetorizando a pergunta do usuário: '{user_query}'")
         # Etapa 1: fazer a vetorização da pergunta do usuário
         embedding = embedding_service.gerar_embedding(
             user_query

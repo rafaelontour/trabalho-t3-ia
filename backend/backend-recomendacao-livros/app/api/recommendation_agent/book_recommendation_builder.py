@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from app.db.session import AsyncSessionLocal
 from app.prompts.book_recomendation import BOOK_RECOMMENDATION
 from app.api.providers.llama_provider import OllamaProvider
+from app.api.providers.gemini_provider import GeminiProvider
 from app.api.recommendation_agent.rag_pipeline import RagPipeline
 from app.api.utils import Book
 
@@ -18,7 +19,7 @@ class BookRecommendationBuilder:
     Classe responsável por gerir o fluxo de recomendação de livros.
     """
 
-    def __init__(self, provider: OllamaProvider):
+    def __init__(self, provider: OllamaProvider | GeminiProvider):
         
         self.response_prompt = BOOK_RECOMMENDATION
 
@@ -65,12 +66,19 @@ class BookRecommendationBuilder:
 
         print("Gerando a resposta final...")
         # Etapa 4: geração de resposta final
-        response = self.provider.generate_response(
-            prompt=updated_prompt
-        )
+        # response = self.provider.generate_response(
+        #     prompt=updated_prompt
+        # )
+
+        final_response = ""
+
+        print("Resposta do Gemini: ", end="", flush=True)
+        for token in self.provider.generate_response_stream(prompt="Me indique um livro de ficção científica rápido de ler."):
+            print(token, end="", flush=True)
+            final_response += token
 
         return BookRecommendationResult(
-            response=response,
+            response=final_response,
             retrieved_books=rag_result
         )
     
@@ -107,19 +115,21 @@ class BookRecommendationBuilder:
 
     #     return improved_query
 
+# Teste do builder
 if __name__ == "__main__": 
 
     import asyncio
 
     async def main(): 
         llama_provider = OllamaProvider(model_config={}) 
+        gemini_provider = GeminiProvider(model_config={"temperature": 0.3, "token_limit": 300})
 
-        builder = BookRecommendationBuilder(provider=llama_provider)
+        builder = BookRecommendationBuilder(provider=gemini_provider)
 
         query = "Quero recomendações de livro da Ali Hazelwood."
 
         response = await builder.stream_build(user_message=query, top_k=6)
 
-        print(response)
+        # print(response)
 
     asyncio.run(main())
