@@ -102,6 +102,10 @@ class BookRecommendationBuilder:
             catalogo_livros=catalogo_livros,
             pergunta_usuario=user_message.strip(),
         )
+    
+    async def stream_build_sem_tag(self, user_message: str, top_k: int):
+
+        pass
 
     
     # def process_user_message(user_message: str) -> str:
