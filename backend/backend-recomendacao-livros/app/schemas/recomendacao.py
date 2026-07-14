@@ -20,13 +20,15 @@ class RecomendacaoRequest(BaseModel):
         return value
 
 
-class RecomendacaoResponse(BaseModel):
-    id: str
-    titulo: str | None
-    autor: str | None
-    genero: str | None
-    ano: int | None
-    numero_paginas: int | None
-    descricao: str | None
-    imagem_url: str | None = None
-    similaridade: float
+class LivroRecomendadoResponse(BaseModel):
+    title: str | None = None
+    author: str | None = None
+    year: int | None = None
+    number_of_pages: int | None = None
+    book_description: str | None = None
+    category: str | None = None
+
+
+class RecomendacaoResultResponse(BaseModel):
+    response: str
+    retrieved_books: list[LivroRecomendadoResponse]

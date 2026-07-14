@@ -2,13 +2,11 @@ import os
 import logging
 from typing import Generator
 from dotenv import load_dotenv
-from openai import OpenAI  # Importa o cliente oficial da OpenAI
+from openai import OpenAI
 
 logger = logging.getLogger("app_logger.openai_provider")
 
-# Mantendo o mesmo caminho absoluto do seu projeto da UNEB
-ENV_PATH = "/home/tatiana/uneb/trabalho-t3-ia/backend/backend-recomendacao-livros/.env"
-load_dotenv(dotenv_path=ENV_PATH)
+load_dotenv()
 
 MAX_TOKENS_DEFAULT = 250
 DEFAULT_TEMPERATURE = 0.7
@@ -29,7 +27,7 @@ class OpenAIProvider:
         
         if not api_key:
             raise ValueError(
-                f"A OPENAI_API_KEY não foi encontrada no arquivo .env localizado em: {ENV_PATH}"
+                "A OPENAI_API_KEY não foi encontrada no arquivo .env."
             )
             
         self.client = OpenAI(api_key=api_key)

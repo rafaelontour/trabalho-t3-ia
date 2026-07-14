@@ -7,10 +7,7 @@ from google.genai import types
 
 logger = logging.getLogger("app_logger.gemini_provider")
 
-# load_dotenv('../api/app/.env')
-
-ENV_PATH = "/home/tatiana/uneb/trabalho-t3-ia/backend/backend-recomendacao-livros/.env"
-load_dotenv(dotenv_path=ENV_PATH)
+load_dotenv()
 
 MAX_TOKENS_DEFAULT = 250
 DEFAULT_TEMPERATURE = 0.7
@@ -30,8 +27,7 @@ class GeminiProvider:
         
         if not api_key:
             raise ValueError(
-                "A GEMINI_API_KEY não foi encontrada no arquivo .env. "
-                "Verifique se o caminho '../api/app/.env' está correto."
+                "A GEMINI_API_KEY não foi encontrada no arquivo .env."
             )
 
         # O cliente busca automaticamente a variável de ambiente GEMINI_API_KEY

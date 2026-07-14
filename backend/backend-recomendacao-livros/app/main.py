@@ -5,12 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import health, livros, recomendacoes
 from app.core.config import settings
+from app.middleware.cors import CORSErrorMiddleware
 from app.services.embedding_service import embedding_service
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # Carrega o modelo uma única vez durante a inicialização.
     embedding_service.load_model()
     yield
 
@@ -20,6 +20,11 @@ app = FastAPI(
     version="1.0.0",
     description="API de listagem e recomendação semântica de livros.",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSErrorMiddleware,
+    allowed_origins=settings.cors_origins_list,
 )
 
 app.add_middleware(
@@ -41,7 +46,3 @@ async def root() -> dict[str, str]:
         "message": settings.app_name,
         "docs": "/docs",
     }
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)

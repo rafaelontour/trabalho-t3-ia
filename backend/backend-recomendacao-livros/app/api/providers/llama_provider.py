@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 logger = logging.getLogger("app_logger.ollama_provider")
 
 
-load_dotenv('../api/app/.env')
+load_dotenv()
 
 MAX_TOKENS_DEFAULT = 250
 DEFAULT_TEMPERATURE = 0.7
