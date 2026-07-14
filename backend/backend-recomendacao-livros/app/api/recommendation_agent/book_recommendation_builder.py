@@ -34,12 +34,6 @@ class BookRecommendationBuilder:
         print("Iniciando pipeline do builder....")
         rag_result = None
 
-        # Etapa 1: processar a pergunta do usuário:
-        # chamar um método que faz algum tratamento na pergunta. Ex: remover stopwords, pegar palavras-chave,
-        # pedir pra o modelo melhorar a pergunta
-        # retornar as palavras chaves da pergunta para montar a query.
-        # TODO: tirar o comentário quando a função estiver implementada        
-        # improved_query = self.process_user_message(user_message)
 
         async with AsyncSessionLocal() as session:
 
@@ -59,7 +53,6 @@ class BookRecommendationBuilder:
                 response=final_response,
                 retrieved_books=rag_result
             )
-            
 
         print("Livros recuperados da RagPipeline...")
 
@@ -77,13 +70,22 @@ class BookRecommendationBuilder:
         final_response = ""
 
         try:
-       
             for token in self.provider.generate_response_stream(prompt=updated_prompt):
                 print(token, end="", flush=True)
                 final_response += token
         
-        except:
-            print("ERROOO NA RESPOSTAAA")
+        except Exception:
+            logger.exception(
+                "[BookRecommendationBuilder][stream_build] Erro ao gerar "
+                "resposta final. Usando resposta padrão."
+            )
+            return self.build_default_response(rag_result)
+
+        if not final_response.strip():
+            logger.error(
+                "[BookRecommendationBuilder][stream_build] Provider não "
+                "retornou tokens. Usando resposta padrão."
+            )
             return self.build_default_response(rag_result)
 
         return BookRecommendationResult(
@@ -139,10 +141,9 @@ class BookRecommendationBuilder:
             pergunta_usuario=user_message.strip(),
         )
     
-    async def stream_build_sem_tag(self, user_message: str, top_k: int):
+    async def stream_build_sem_rag(self, user_message: str, top_k: int):
 
         pass
-
 
 
 

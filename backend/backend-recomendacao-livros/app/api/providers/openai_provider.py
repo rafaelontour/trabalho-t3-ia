@@ -64,6 +64,7 @@ class OpenAIProvider:
 
         except Exception as e:
             logger.exception(f"[OpenAIProvider] Erro na geração via OpenAI: {e}")
+            raise
 
 
 # TESTE DO PROVIDER DA OPENAI
