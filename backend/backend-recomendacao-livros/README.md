@@ -37,57 +37,160 @@ app/
 └── main.py
 ```
 
-## Executar usando o PostgreSQL que já existe
+## Pré-requisitos
 
-Crie o ambiente:
+- Python 3.12
+- Docker e Docker Compose, para subir o PostgreSQL com pgvector
+- Node.js, se também for rodar o frontend
+- Uma chave de provedor LLM, caso use a rota de recomendação com resposta gerada
+  pelo modelo (`OPENAI_API_KEY` ou `GEMINI_API_KEY`)
+
+## Rodar o backend localmente
+
+### 1. Subir o banco de dados
+
+Na raiz do projeto, suba o PostgreSQL com pgvector:
 
 ```bash
+cd backend
+docker compose up -d
+```
+
+Esse compose cria:
+
+- PostgreSQL em `localhost:5432`
+- banco `trabalho-t3`
+- usuário `postgres`
+- senha `postgres`
+- pgAdmin em `http://localhost:5050`
+
+O arquivo `database/01-init.sql` é executado automaticamente na primeira criação
+do volume do banco.
+
+### 2. Criar o ambiente Python
+
+Em outro terminal:
+
+```bash
+cd backend/backend-recomendacao-livros
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Ajuste a conexão no `.env`:
+### 3. Configurar o `.env`
+
+Ajuste a conexão do banco no arquivo `.env`:
 
 ```env
-DATABASE_URL=postgresql+asyncpg://USUARIO:SENHA@localhost:5432/BANCO
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/trabalho-t3
 ```
 
-Como a API está rodando no seu computador e o PostgreSQL está publicado na
-porta `5432`, o host é `localhost`.
+Se for usar OpenAI:
 
-Depois de importar seus livros, preencha os embeddings:
+```env
+OPENAI_API_KEY=sua_chave
+OPENAI_MODEL=gpt-4o-mini
+```
+
+Se for usar Gemini:
+
+```env
+GEMINI_API_KEY=sua_chave
+GEMINI_MODEL=gemini-2.0-flash
+```
+
+### 4. Gerar os embeddings
+
+Os livros do `01-init.sql` entram no banco com `embedding = NULL`. Depois de
+subir o banco, gere os vetores:
 
 ```bash
 python -m app.scripts.generate_embeddings
 ```
 
-Inicie a API:
+Esse passo precisa ser repetido quando novos livros forem inseridos sem
+embedding ou quando o modelo de embedding for alterado.
+
+### 5. Iniciar a API
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Documentação:
+A API ficará disponível em:
 
 ```text
 http://localhost:8000/docs
 ```
 
-## Executar tudo pelo Docker Compose
+## Rodar a API pelo Docker
+
+O projeto também tem um compose específico para a API em
+`backend/backend-recomendacao-livros/docker-compose.yml`.
+
+Primeiro suba o banco pela pasta `backend`, como mostrado acima. Depois, na pasta
+do backend da API:
 
 ```bash
+cd backend/backend-recomendacao-livros
 docker compose up --build -d
 ```
 
-Quando a API e o PostgreSQL estão no Docker Compose, o host interno do banco é
-`postgres`, que é o nome do serviço.
-
-Depois, gere os embeddings:
+Depois gere os embeddings dentro do container:
 
 ```bash
 docker compose exec api python -m app.scripts.generate_embeddings
+```
+
+## Rodar o frontend
+
+Em outro terminal, a partir da raiz do projeto:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Abra:
+
+```text
+http://localhost:3000
+```
+
+O frontend espera que a API esteja em:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+```
+
+## Scripts úteis
+
+### Testar similaridade dos embeddings
+
+```bash
+cd backend/backend-recomendacao-livros
+source .venv/bin/activate
+python -m app.scripts.teste_embeddings
+```
+
+Também é possível passar uma consulta específica:
+
+```bash
+python -m app.scripts.teste_embeddings "quero um livro da ali hazelwood"
+```
+
+Esse script mostra o ranking por distância de cosseno no pgvector e ajuda a
+verificar se o RAG está recuperando os livros esperados.
+
+### Rodar testes
+
+```bash
+cd backend/backend-recomendacao-livros
+source .venv/bin/activate
+python -m pytest
 ```
 
 ## Endpoints
@@ -116,25 +219,26 @@ Content-Type: application/json
 }
 ```
 
-Resposta:
+Resposta atual da rota de recomendação:
 
 ```json
-[
-  {
-    "id": "L0025",
-    "titulo": "Harry Potter e a Pedra Filosofal",
-    "autor": "J.K. Rowling",
-    "genero": "OUTRO",
-    "ano": 1997,
-    "numero_paginas": 208,
-    "descricao": "...",
-    "similaridade": 0.7342
-  }
-]
+{
+  "response": "Texto gerado pelo modelo com a recomendação.",
+  "retrieved_books": [
+    {
+      "title": "Harry Potter e a Pedra Filosofal",
+      "author": "J.K. Rowling",
+      "year": 1997,
+      "number_of_pages": 208,
+      "book_description": "...",
+      "category": "FANTASIA"
+    }
+  ]
+}
 ```
 
-Quanto maior a similaridade, mais próximo semanticamente o livro está do texto
-digitado.
+O campo `retrieved_books` contém os livros recuperados pelo RAG e enviados como
+contexto para o prompt.
 
 ## Observações
 
@@ -143,5 +247,7 @@ digitado.
 - O modelo configurado gera vetores de 384 dimensões, compatíveis com
   `VECTOR(384)`.
 - Ao mudar o modelo, apague ou regenere todos os embeddings.
-- O endpoint não usa um LLM para decidir os resultados; a comparação é feita
-  por embeddings e distância vetorial.
+- A busca vetorial funciona bem para tema, gênero e estilo, mas nomes próprios
+  como autores e títulos podem exigir busca textual complementar.
+- A rota de recomendação recupera livros por embeddings e usa um provider LLM
+  para formatar a resposta final.
