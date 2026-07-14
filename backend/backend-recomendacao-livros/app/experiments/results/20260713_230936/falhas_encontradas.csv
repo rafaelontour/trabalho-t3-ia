@@ -1,0 +1,5 @@
+﻿test_id,categoria,versao,tipo_falha,consulta,resposta,livros_recuperados,erro
+T019,ambiguo,sem_rag,ERRO_DE_RECUSA,Procuro um livro para ler no fim de semana.,"Desculpe, sou um sistema especializado em recomendação de livros e só posso ajudar com esse tema.",,
+T023,base_insuficiente,sem_rag,ERRO_DE_RECUSA,Quero um atlas médico especializado em neurocirurgia pediátrica.,"1. ""Pediatric Neurosurgery: Surgery of the Developing Nervous System"" - Michael J. Apuzzo
+2. ""Atlas of Pediatric Neurosurgery"" - R. Michael Scott
+3. ""Neurosurgery for Children"" - R. Michael Scott e outros",,

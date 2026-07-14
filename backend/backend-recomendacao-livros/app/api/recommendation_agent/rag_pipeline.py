@@ -1,6 +1,7 @@
-from sqlalchemy import select
+import unicodedata
 
-from app.db.session import AsyncSessionLocal
+from sqlalchemy import String, cast, select
+
 from app.models.livro import Livro
 from app.services.embedding_service import embedding_service
 from app.api.utils import Book
@@ -13,6 +14,111 @@ class RagPipeline:
     def __init__(self):
         
         self.embedding_service = embedding_service
+        self.genre_keywords = {
+            "ROMANCE": {
+                "amor",
+                "romance",
+                "romantico",
+                "romantica",
+                "relacionamento",
+                "relacionamentos",
+                "emocao",
+                "emocional",
+                "casal",
+                "contemporaneo",
+                "leve",
+            },
+            "FANTASIA": {
+                "fantasia",
+                "magia",
+                "magico",
+                "magica",
+                "bruxo",
+                "bruxa",
+                "criatura",
+                "criaturas",
+                "mitologia",
+                "mitologico",
+                "mitologica",
+                "aventura",
+                "mundo imaginario",
+                "mundo diferente",
+            },
+            "TERROR": {
+                "terror",
+                "horror",
+                "sombrio",
+                "sobrenatural",
+                "vampiro",
+                "medo",
+                "assustador",
+                "angustia",
+            },
+            "SUSPENSE": {
+                "suspense",
+                "misterio",
+                "investigacao",
+                "crime",
+                "crimes",
+                "segredo",
+                "segredos",
+                "reviravolta",
+                "reviravoltas",
+                "assassinato",
+            },
+            "BIOGRAFIA": {
+                "biografia",
+                "trajetoria real",
+                "pessoa relevante",
+                "historia real",
+                "vida de",
+                "inspiradora",
+                "inspirador",
+            },
+            "CLASSICO": {
+                "classico",
+                "classica",
+                "literatura",
+                "literario",
+                "literaria",
+                "antigo",
+                "antiga",
+                "obra importante",
+            },
+            "INFANTIL": {
+                "infantil",
+                "crianca",
+                "criancas",
+                "curto",
+                "divertido",
+            },
+            "FICCAO": {
+                "ficcao",
+                "futuro",
+                "futuros",
+                "sociedade",
+                "distopia",
+                "tecnologia",
+                "criativa",
+                "ideia criativa",
+            },
+            "CIENCIA": {
+                "ciencia",
+                "cientifico",
+                "cientifica",
+                "fisica",
+                "universo",
+                "tecnologia",
+                "aprender",
+                "acessivel",
+            },
+            "POEMA": {
+                "poema",
+                "poesia",
+                "poetico",
+                "poetica",
+            },
+        }
     
 
     async def stream_build(self, session, user_query: str, top_k: int) -> list[Book]:
@@ -37,6 +143,7 @@ class RagPipeline:
         # Etapa 2: recuperar os livros da base de dados
         retrived_books = await self.retrive_books_from_base(
             session=session,
+            user_query=user_query,
             user_query_embeded=embedding,
             top_k=top_k
         )
@@ -47,7 +154,13 @@ class RagPipeline:
 
         
 
-    async def retrive_books_from_base(self, session, user_query_embeded, top_k: int): 
+    async def retrive_books_from_base(
+        self,
+        session,
+        user_query: str,
+        user_query_embeded,
+        top_k: int,
+    ): 
         """
         Recupera os livros da base de dados, ordenando por similaridade dos embeddings. 
 
@@ -58,17 +171,83 @@ class RagPipeline:
 
         print("Recuperando livros do banco...")
 
+        expected_genres = self.infer_genres(user_query)
+        distance = Livro.embedding.cosine_distance(user_query_embeded)
+        books_by_id = {}
+
+        if expected_genres:
+            genre_query = (
+                select(Livro)
+                .where(Livro.embedding.is_not(None))
+                .where(cast(Livro.genero, String).in_(expected_genres))
+                .order_by(distance)
+                .limit(top_k)
+            )
+            genre_result = await session.execute(genre_query)
+            for book in genre_result.scalars():
+                books_by_id[book.id] = book
+
+            if not books_by_id:
+                genre_fallback_query = (
+                    select(Livro)
+                    .where(cast(Livro.genero, String).in_(expected_genres))
+                    .order_by(Livro.id)
+                    .limit(top_k)
+                )
+                genre_fallback_result = await session.execute(
+                    genre_fallback_query
+                )
+                for book in genre_fallback_result.scalars():
+                    books_by_id[book.id] = book
+
         query = (
             select(Livro)
+            .where(Livro.embedding.is_not(None))
             .order_by(
-                Livro.embedding.cosine_distance(user_query_embeded)
+                distance
             )
-            .limit(top_k)
+            .limit(top_k * 2)
         )
 
         result = await session.execute(query)
+        for book in result.scalars():
+            books_by_id.setdefault(book.id, book)
+            if len(books_by_id) >= top_k:
+                break
 
-        return list(result.scalars())
+        if not books_by_id:
+            fallback_query = (
+                select(Livro)
+                .order_by(Livro.id)
+                .limit(top_k)
+            )
+            fallback_result = await session.execute(fallback_query)
+            for book in fallback_result.scalars():
+                books_by_id[book.id] = book
+
+        return list(books_by_id.values())
+
+    @staticmethod
+    def normalize_text(value: str) -> str:
+        normalized = unicodedata.normalize("NFKD", value.lower())
+        return "".join(
+            char for char in normalized if not unicodedata.combining(char)
+        )
+
+    def infer_genres(self, user_query: str) -> list[str]:
+        normalized_query = self.normalize_text(user_query)
+        matches: list[tuple[int, str]] = []
+
+        for genre, keywords in self.genre_keywords.items():
+            score = sum(
+                1 for keyword in keywords
+                if self.normalize_text(keyword) in normalized_query
+            )
+            if score:
+                matches.append((score, genre))
+
+        matches.sort(key=lambda item: item[0], reverse=True)
+        return [genre for _, genre in matches]
 
     def format_results(self, results: list) -> list[Book]:
         """
@@ -94,5 +273,3 @@ class RagPipeline:
             formatted_results.append(formatted_book)
 
         return formatted_results
-
-

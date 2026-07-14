@@ -1,6 +1,5 @@
 import logging
-
-from dataclasses import dataclass
+import unicodedata
 
 from app.db.session import AsyncSessionLocal
 from app.prompts.book_recomendation import BOOK_RECOMMENDATION
@@ -11,6 +10,14 @@ from app.api.recommendation_agent.rag_pipeline import RagPipeline
 from app.api.utils import BookRecommendationResult
 
 logger = logging.getLogger("app_logger.book_recommendation_builder")
+
+REFUSAL_OUT_OF_DOMAIN = (
+    "Desculpe, sou um sistema especializado em recomendação de livros "
+    "e só posso ajudar com esse tema."
+)
+REFUSAL_NO_CONTEXT = (
+    "Desculpe, não encontrei opções correspondentes no catálogo atual."
+)
 
 
 class BookRecommendationBuilder:
@@ -86,6 +93,9 @@ class BookRecommendationBuilder:
             print("ERROOO NA RESPOSTAAA")
             return self.build_default_response(rag_result)
 
+        if self.should_replace_invalid_refusal(user_message, final_response):
+            return self.build_recommendation_from_catalog(rag_result)
+
         return BookRecommendationResult(
             response=final_response,
             retrieved_books=rag_result
@@ -115,6 +125,70 @@ class BookRecommendationBuilder:
             response=response,
             retrieved_books=[best_result]
         )
+
+    def build_recommendation_from_catalog(
+        self,
+        rag_documents: list,
+    ) -> BookRecommendationResult:
+        best_results = rag_documents[:3]
+        titles = ", ".join(
+            f'"{book.title}" de {book.author}' for book in best_results
+        )
+        response = (
+            f"A opção mais próxima no catálogo é {titles}. "
+            "Ela foi selecionada por estar entre os livros mais compatíveis "
+            "com a preferência informada."
+        )
+
+        return BookRecommendationResult(
+            response=response,
+            retrieved_books=rag_documents,
+        )
+
+    @staticmethod
+    def normalize_text(value: str) -> str:
+        normalized = unicodedata.normalize("NFKD", value.lower())
+        return "".join(
+            char for char in normalized if not unicodedata.combining(char)
+        )
+
+    def is_refusal(self, response: str) -> bool:
+        normalized = " ".join(response.split()).lower()
+        return (
+            REFUSAL_OUT_OF_DOMAIN.lower() in normalized
+            or REFUSAL_NO_CONTEXT.lower() in normalized
+        )
+
+    def should_replace_invalid_refusal(
+        self,
+        user_message: str,
+        final_response: str,
+    ) -> bool:
+        if not self.is_refusal(final_response):
+            return False
+
+        normalized = self.normalize_text(user_message)
+
+        blocked_terms = (
+            "manual tecnico",
+            "turbinas eolicas",
+            "juridico",
+            "legislacao tributaria",
+            "atlas medico",
+            "neurocirurgia",
+            "microcontrolador",
+            "lasanha",
+            "previsao do tempo",
+            "calcule",
+            "dividido",
+            "ignore todas as instrucoes",
+            "chave de api",
+            "codigo malicioso",
+            "desobedeca",
+            "<catalogo_livros>",
+        )
+
+        return not any(term in normalized for term in blocked_terms)
     
 
 

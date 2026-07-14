@@ -1,0 +1,3 @@
+﻿versao,execucoes,sucesso_tecnico_percentual,acerto_recusa_percentual,acerto_genero_recuperacao_percentual,tempo_medio_ms,tempo_mediano_ms,erros_tecnicos
+sem_rag,30,100.0,93.33,não aplicável,1498.01,1404.55,0
+com_rag,30,100.0,100.0,100.0,1448.67,1158.58,0
