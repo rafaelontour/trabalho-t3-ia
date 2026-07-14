@@ -33,6 +33,7 @@ class RagPipeline:
         embedding = embedding_service.gerar_embedding(
             user_query
         )
+        print(f"embedding da pergunta: {embedding}")
 
         # Etapa 2: recuperar os livros da base de dados
         retrived_books = await self.retrive_books_from_base(

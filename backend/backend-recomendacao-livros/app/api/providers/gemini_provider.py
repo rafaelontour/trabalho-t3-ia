@@ -64,6 +64,7 @@ class GeminiProvider:
 
         except Exception as e:
             logger.exception(f"[GeminiProvider] Erro na geração via Gemini: {e}")
+            raise
 
 
 # TESTE DO PROVIDER DO GEMINI
