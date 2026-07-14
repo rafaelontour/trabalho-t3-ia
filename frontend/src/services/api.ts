@@ -1,9 +1,9 @@
 import type {
   ListarLivrosParams,
   Livro,
-  LivroRecomendado,
   LivrosPaginados,
-  RecomendacaoPayload
+  RecomendacaoPayload,
+  RecommendationResponse
 } from "@/types/livro";
 
 const API_URL = (
@@ -71,8 +71,8 @@ export function listarGeneros(): Promise<string[]> {
 
 export function recomendarLivros(
   payload: RecomendacaoPayload
-): Promise<LivroRecomendado[]> {
-  return request<LivroRecomendado[]>("/recomendacoes", {
+): Promise<RecommendationResponse> {
+  return request<RecommendationResponse>("/recomendacoes", {
     method: "POST",
     body: JSON.stringify(payload)
   });

@@ -9,6 +9,7 @@ import type { LivroRecomendado } from "@/types/livro";
 export function RecommendationSearch() {
   const [preferencia, setPreferencia] = useState("");
   const [resultados, setResultados] = useState<LivroRecomendado[]>([]);
+  const [respostaLLM, setRespostaLLM] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [pesquisou, setPesquisou] = useState(false);
@@ -28,14 +29,30 @@ export function RecommendationSearch() {
     setPesquisou(true);
 
     try {
-      const livros = await recomendarLivros({
+      const data = await recomendarLivros({
         preferencia: texto,
         limite: 6
       });
 
-      setResultados(livros);
+      const livrosConvertidos: LivroRecomendado[] = (data.retrieved_books ?? []).map(
+        (book, index) => ({
+          id: `rec-${index}`,
+          titulo: book.title,
+          autor: book.author,
+          genero: book.category,
+          ano: book.year,
+          numero_paginas: book.number_of_pages,
+          descricao: book.book_description,
+          imagem_url: null,
+          similaridade: 1 - index * 0.05
+        })
+      );
+
+      setRespostaLLM(data.response ?? "");
+      setResultados(livrosConvertidos);
     } catch (error) {
       setResultados([]);
+      setRespostaLLM("");
       setErro(
         error instanceof Error
           ? error.message
@@ -100,10 +117,18 @@ export function RecommendationSearch() {
               Comparando sua preferência com os livros...
             </p>
           ) : (
-            <BookGrid
-              livros={resultados}
-              mensagemVazia="Nenhum livro semelhante foi encontrado."
-            />
+            <>
+              {respostaLLM && (
+                <div className="llm-response">
+                  <p>{respostaLLM}</p>
+                </div>
+              )}
+
+              <BookGrid
+                livros={resultados}
+                mensagemVazia="Nenhum livro semelhante foi encontrado."
+              />
+            </>
           )}
         </div>
       )}

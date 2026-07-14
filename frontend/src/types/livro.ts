@@ -34,3 +34,17 @@ export type RecomendacaoPayload = {
   preferencia: string;
   limite: number;
 };
+
+export type BookFromAPI = {
+  title: string | null;
+  author: string | null;
+  year: number | null;
+  number_of_pages: number | null;
+  book_description: string | null;
+  category: string | null;
+};
+
+export type RecommendationResponse = {
+  response: string;
+  retrieved_books: BookFromAPI[];
+};

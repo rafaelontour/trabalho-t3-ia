@@ -13,8 +13,11 @@ export function BookGrid({ livros, mensagemVazia }: Props) {
 
   return (
     <div className="book-grid">
-      {livros.map((livro) => (
-        <BookCard key={livro.id} livro={livro} />
+      {livros.map((livro, index) => (
+        <BookCard
+          key={livro.id ?? `${livro.titulo}-${index}`}
+          livro={livro}
+        />
       ))}
     </div>
   );
